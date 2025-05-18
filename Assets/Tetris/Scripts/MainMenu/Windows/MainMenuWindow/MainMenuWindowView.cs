@@ -1,11 +1,18 @@
 using System;
+using Tetris.MainMenu.Windows;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Tetris.MainMenu
 {
-    public class MenuButtonsController : MonoBehaviour
+    public class MainMenuWindowView : WindowViewBase
     {
+        public event Action OnSinglePlayerClick;
+        public event Action OnMultiPlayerClick;
+        public event Action OnSettingsClick;
+        public event Action OnExitClick;
+        
+        [Header("ButtonsLink")]
         [SerializeField] private Button _singlePlayerButton;
         [SerializeField] private Button _multiPlayerButton;
         [SerializeField] private Button _settingsButton;
@@ -29,23 +36,22 @@ namespace Tetris.MainMenu
 
         private void OnSinglePlayerButtonClicked()
         {
-            
+            OnSinglePlayerClick?.Invoke();
         }
         
         private void OnMultiPlayerButtonClicked()
         {
-            
+            OnMultiPlayerClick?.Invoke();
         }
         
         private void OnSettingsButtonClicked()
         {
-            
+            OnSettingsClick?.Invoke();
         }
         
         private void OnExitButtonClicked()
         {
-            Debug.Log("[Menu Buttons] OnExitButtonClicked");
-            Application.Quit();
+            OnExitClick?.Invoke();
         }
     }
 }

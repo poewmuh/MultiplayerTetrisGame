@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Tetris.Helpers;
+using Tetris.MainMenu.Windows;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,8 +9,6 @@ namespace Tetris.MainMenu
     public class FirstIntroMainMenu : MonoBehaviour
     {
         private static bool isFirstIntro = true;
-
-        [SerializeField] private CanvasGroup _buttonsHodler;
 
         private void Start()
         {
@@ -29,7 +28,7 @@ namespace Tetris.MainMenu
         private void ShowButtonsAndDisable()
         {
             gameObject.SetActive(false);
-            _buttonsHodler.DOFade(1, 1);
+            WindowsManager.CreateWindow<MainMenuWindow>(MainMenuWindow.ASSET_PATH, transform.parent);
         }
     }
 }

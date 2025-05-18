@@ -9,10 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dea69d41f90c6ea4fa55c27c1d60c145, type: 3}
-  m_Name: AddressableAssetGroupSortSettings
+  m_Script: {fileID: 11500000, guid: e651dbb3fbac04af2b8f5abf007ddc23, type: 3}
+  m_Name: DefaultNetworkPrefabs
   m_EditorClassIdentifier: 
-  sortOrder:
-  - 7439d33dbc2b22e4da35ceeb2dd3776a
-  - 3bea66a37967dd240b4338afbd2a5c0f
-  - c3a9a02da56bc954aaec61bf965fb524
+  IsDefault: 1
+  List: []
