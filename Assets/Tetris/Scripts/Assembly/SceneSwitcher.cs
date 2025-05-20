@@ -1,6 +1,7 @@
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.Netcode;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
 namespace Tetris.Assembly
 {
@@ -18,6 +19,12 @@ namespace Tetris.Assembly
         {
             currentScene = scene;
             Addressables.LoadSceneAsync(scenesPath[scene]);
+        }
+
+        public static void LoadNetScene(SceneType scene)
+        {
+            currentScene = scene;
+            NetworkManager.Singleton.SceneManager.LoadScene(scenesPath[scene], LoadSceneMode.Single);
         }
     }
 }
