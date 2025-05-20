@@ -22,19 +22,21 @@ namespace Tetris.Gameplay.Core
         }
         
         public float elapsedTime => _elapsedTime.Value;
-        public SessionState state => (SessionState)_state.Value;
+        public SessionState state { get; private set; } = SessionState.Created;
         public GameModeType gameModeType => _gameModeType;
         
         private readonly NetworkVariable<float> _elapsedTime = new ();
-        private readonly NetworkVariable<byte> _state = new ();
+
+        private int _readyPlayers;
         
         [SerializeField] private GameModeType _gameModeType;
         
         protected override void Initialize()
         {
             SetupGameMode();
+            if (!IsServer) return;
+            
             SetState(SessionState.Initialized);
-            StartGame();
         }
 
         private void SetupGameMode()
@@ -46,22 +48,36 @@ namespace Tetris.Gameplay.Core
             }
         }
 
-        private void SetState(SessionState state)
+        private void SetState(SessionState newState)
         {
-            if (IsServer) _state.Value = (byte)state;
-            OnSessionStateChanged?.Invoke(state);
-            Debug.Log($"[Session] State changed: {state}");
+            SendStateChangeRpc((byte)newState);
         }
 
-        private void StartGame()
+        [Rpc(SendTo.Everyone)]
+        private void SendStateChangeRpc(byte newState)
         {
-            GameMode.StartGame();
-            SetState(SessionState.Started);
+            state = (SessionState)newState;
+            OnSessionStateChanged?.Invoke(state);
+            Debug.Log($"[Session] State changed: {state}");
+
+            if (state == SessionState.Started)
+            {
+                GameMode.StartGame();
+            }
         }
 
         public void FinishGame()
         {
             SetState(SessionState.Finished);
+        }
+
+        public void OnPlayerReady()
+        {
+            _readyPlayers++;
+            if (_readyPlayers == GameMode.playersCount)
+            {
+                SetState(SessionState.Started);
+            }
         }
     }
 }

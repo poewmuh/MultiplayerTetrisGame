@@ -18,10 +18,7 @@ namespace Tetris.MainMenu.Windows
                 return null;
             }
 
-            if (_previousWindow != null)
-            {
-                _previousWindow.StartClose();
-            }
+            ClosePrevious();
 
             var loadHandler = new AssetLoaderHandler();
             var windowObject = loadHandler.LoadGOImmediate<T>(path);
@@ -30,6 +27,14 @@ namespace Tetris.MainMenu.Windows
             _openedWindowAssets.Add(window, loadHandler);
             _previousWindow = window;
             return window;
+        }
+
+        public static void ClosePrevious()
+        {
+            if (_previousWindow != null)
+            {
+                _previousWindow.StartClose();
+            }
         }
         
         private static void OnWindowClose(WindowBase window)

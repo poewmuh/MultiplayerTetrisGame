@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Tetris.Tools
@@ -28,6 +29,25 @@ namespace Tetris.Tools
         public static bool Approx(this float f, float f2)
         {
             return Mathf.Approximately(f, f2);
+        }
+        
+        public static bool TryAdd<T> (this List<T> list, T value)
+        {
+            if (list.Contains(value))
+                return false;
+            
+            list.Add(value);
+            return true;
+        }
+        
+        public static void ShuffleList<T>(IList<T> list)
+        {
+            System.Random rand = new System.Random();
+            for (int i = list.Count - 1; i >= 1; i--)
+            {
+                int j = rand.Next(i + 1);
+                (list[j], list[i]) = (list[i], list[j]);
+            }
         }
     }
 }

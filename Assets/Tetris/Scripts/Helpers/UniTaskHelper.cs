@@ -1,5 +1,6 @@
 using System;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace Tetris.Helpers
 {
@@ -14,6 +15,12 @@ namespace Tetris.Helpers
         public static async UniTaskVoid WaitAndDo(float delay, Action action)
         {
             await UniTask.Delay(TimeSpan.FromSeconds(delay));
+            action?.Invoke();
+        }
+        
+        public static async UniTaskVoid WaitAndDo(GameObject go, float delay, Action action)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: go.GetCancellationTokenOnDestroy());
             action?.Invoke();
         }
     }

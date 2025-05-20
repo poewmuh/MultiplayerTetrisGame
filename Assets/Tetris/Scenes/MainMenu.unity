@@ -785,7 +785,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1233175409}
-    PlayerPrefab: {fileID: 0}
+    PlayerPrefab: {fileID: 4639546427314115214, guid: 36126c9b4f9eb5d498787383359169e7, type: 3}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: fb79473f03a865c46b855c30951000aa, type: 2}
@@ -806,7 +806,7 @@ MonoBehaviour:
     EnableNetworkLogs: 1
     NetworkTopology: 1
     UseCMBService: 0
-    AutoSpawnPlayerPrefabClientSide: 0
+    AutoSpawnPlayerPrefabClientSide: 1
     NetworkMessageMetrics: 1
     NetworkProfilingMetrics: 1
     OldPrefabList: []
