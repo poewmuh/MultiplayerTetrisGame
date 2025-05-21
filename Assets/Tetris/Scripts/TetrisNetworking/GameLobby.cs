@@ -1,8 +1,11 @@
 using System;
 using Tetris.Assembly;
+using Tetris.Gameplay.Core;
 using Tetris.Tools;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
+using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -14,6 +17,10 @@ namespace Tetris.TetrisNetworking
         public bool IsConnecting { get; private set; }
         
         private Lobby _joinedLobby;
+
+        private float _heartBitTimer = 5f;
+        private float _timer;
+        private bool _stopHeartBit;
 
         protected override void Awake()
         {
@@ -71,6 +78,27 @@ namespace Tetris.TetrisNetworking
                 return;
             }
             SceneSwitcher.LoadNetScene(SceneType.Gameplay);
+        }
+
+        private void Update()
+        {
+            if (_stopHeartBit) return;
+            if (!NetworkManager.Singleton.IsServer) return;
+            if (_joinedLobby == null) return;
+            if (!Session.Instance) return;
+            if (Session.Instance.GameMode.currentState != GameState.Empty)
+            {
+                _stopHeartBit = true;
+                NetworkHelper.UpdateLobby(_joinedLobby.Id, new UpdateLobbyOptions() { IsLocked = true });
+                return;
+            }
+
+            _timer += Time.deltaTime;
+            if (_timer >= _heartBitTimer)
+            {
+                _timer = 0f;
+                NetworkHelper.SendHeartbeatPing(_joinedLobby.Id);
+            }
         }
 
         public async void StartJoining()

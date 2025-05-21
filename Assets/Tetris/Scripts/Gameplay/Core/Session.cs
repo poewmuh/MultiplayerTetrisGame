@@ -74,6 +74,7 @@ namespace Tetris.Gameplay.Core
         public void OnPlayerReady()
         {
             _readyPlayers++;
+            
             if (_readyPlayers == GameMode.playersCount)
             {
                 SetState(SessionState.Started);
