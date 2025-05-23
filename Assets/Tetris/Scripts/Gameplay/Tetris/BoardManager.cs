@@ -29,7 +29,7 @@ namespace Tetris.Gameplay.Tetris
         private void OnNewPlayerReceived(PlayerController player)
         {
             SpawnBoardOnFreePlace(player);
-            if (PlayerControllerManager.Instance.GetPlayersController().Count == Session.Instance.GameMode.playersCount)
+            if (PlayerControllerManager.Instance.GetPlayersController().Count == Session.Instance.gameMode.playersCount)
             {
                 PlayerControllerManager.Instance.OnPlayerControllerReceived -= OnNewPlayerReceived;
             }

@@ -16,7 +16,7 @@ namespace Tetris.Gameplay.UI
 
         private void Start()
         {
-            Session.Instance.GameMode.OnStateChanged += OnGameStateChange;
+            Session.Instance.gameMode.OnStateChanged += OnGameStateChange;
         }
 
         private void OnGameStateChange(GameState state)
@@ -28,7 +28,7 @@ namespace Tetris.Gameplay.UI
 
             if (state == GameState.InGame)
             {
-                Session.Instance.GameMode.OnStateChanged -= OnGameStateChange;
+                Session.Instance.gameMode.OnStateChanged -= OnGameStateChange;
                 Hide();
             }
         }

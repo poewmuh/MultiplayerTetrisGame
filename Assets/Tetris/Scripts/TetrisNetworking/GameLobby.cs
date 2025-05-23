@@ -82,11 +82,12 @@ namespace Tetris.TetrisNetworking
 
         private void Update()
         {
+            //todo : create update lobby class
             if (_stopHeartBit) return;
             if (!NetworkManager.Singleton.IsServer) return;
             if (_joinedLobby == null) return;
             if (!Session.Instance) return;
-            if (Session.Instance.GameMode.currentState != GameState.Empty)
+            if (Session.Instance.gameMode.currentState != GameState.Empty)
             {
                 _stopHeartBit = true;
                 NetworkHelper.UpdateLobby(_joinedLobby.Id, new UpdateLobbyOptions() { IsLocked = true });

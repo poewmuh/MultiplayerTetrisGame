@@ -24,7 +24,7 @@ namespace Tetris.Tools
             _deltaTime = Time.deltaTime;
             foreach(var t in _timers)
             {
-                t.Update(_deltaTime);
+                t.Tick(_deltaTime);
             }
             
             foreach (var timer in _unregisteredTimers)

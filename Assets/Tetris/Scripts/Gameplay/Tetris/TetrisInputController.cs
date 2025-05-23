@@ -26,19 +26,19 @@ namespace Tetris.Gameplay.Tetris
         private float _timerDown;
         private float _timerRotate;
         
-        private System.Action<InputAction.CallbackContext> _moveLeftStarted;
-        private System.Action<InputAction.CallbackContext> _moveLeftCanceled;
-        private System.Action<InputAction.CallbackContext> _moveRightStarted;
-        private System.Action<InputAction.CallbackContext> _moveRightCanceled;
-        private System.Action<InputAction.CallbackContext> _moveDownStarted;
-        private System.Action<InputAction.CallbackContext> _moveDownCanceled;
-        private System.Action<InputAction.CallbackContext> _rotateStarted;
-        private System.Action<InputAction.CallbackContext> _rotateCanceled;
+        private Action<InputAction.CallbackContext> _moveLeftStarted;
+        private Action<InputAction.CallbackContext> _moveLeftCanceled;
+        private Action<InputAction.CallbackContext> _moveRightStarted;
+        private Action<InputAction.CallbackContext> _moveRightCanceled;
+        private Action<InputAction.CallbackContext> _moveDownStarted;
+        private Action<InputAction.CallbackContext> _moveDownCanceled;
+        private Action<InputAction.CallbackContext> _rotateStarted;
+        private Action<InputAction.CallbackContext> _rotateCanceled;
 
-        private System.Action<InputAction.CallbackContext> _moveLeftPerformed;
-        private System.Action<InputAction.CallbackContext> _moveRightPerformed;
-        private System.Action<InputAction.CallbackContext> _moveDownPerformed;
-        private System.Action<InputAction.CallbackContext> _rotatePerformed;
+        private Action<InputAction.CallbackContext> _moveLeftPerformed;
+        private Action<InputAction.CallbackContext> _moveRightPerformed;
+        private Action<InputAction.CallbackContext> _moveDownPerformed;
+        private Action<InputAction.CallbackContext> _rotatePerformed;
 
         protected override void Awake()
         {

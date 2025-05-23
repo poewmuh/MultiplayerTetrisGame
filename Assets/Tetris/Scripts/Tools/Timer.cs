@@ -40,7 +40,7 @@ namespace Tetris.Tools
             return this;
         }
         
-        public void Update(float deltaTime)
+        public void Tick(float deltaTime)
         {
             if (Pause) return;
             

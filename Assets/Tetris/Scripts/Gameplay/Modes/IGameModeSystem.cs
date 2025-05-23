@@ -6,7 +6,7 @@ namespace Tetris.Gameplay.Core
 {
     public interface IGameModeSystem
     {
-        event Action OnGameOver;
+        event Action<ulong> OnGameOver;
 
         void SpawnPiece(ulong ownerId);
         float GetFallDelay();

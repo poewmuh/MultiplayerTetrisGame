@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Tetris.Data;
 using Unity.Netcode;
 using UnityEngine;
@@ -6,7 +7,6 @@ namespace Tetris.Gameplay.Tetris
 {
     public class TetrisBoard : NetworkBehaviour
     {
-        
         [SerializeField] private Transform _pieceSpawnPoint;
         [SerializeField] private TetrisData _data;
         
@@ -41,9 +41,70 @@ namespace Tetris.Gameplay.Tetris
                 _grid[(int)pos.x, (int)pos.y] = block;
         }
         
-        public void ClearFullRows()
+        public void ClearFullLines()
         {
-            
+            var fullLines = new List<int>();
+
+            for (int y = 0; y < _data.height; y++)
+            {
+                if (IsLineFull(y))
+                {
+                    fullLines.Add(y);
+                    ClearLine(y);
+                }
+            }
+
+            if (fullLines.Count == 0)
+                return;
+
+            int shift = 0;
+            for (int y = 0; y < _data.height; y++)
+            {
+                if (fullLines.Contains(y))
+                {
+                    shift++;
+                }
+                else if (shift > 0)
+                {
+                    ShiftLineDown(y, shift);
+                }
+            }
+        }
+
+        private bool IsLineFull(int y)
+        {
+            for (int x = 0; x < _data.width; x++)
+            {
+                if (_grid[x, y] == null)
+                    return false;
+            }
+            return true;
+        }
+
+        private void ClearLine(int y)
+        {
+            for (int x = 0; x < _data.width; x++)
+            {
+                if (_grid[x, y] != null)
+                {
+                    Destroy(_grid[x, y].gameObject);
+                    _grid[x, y] = null;
+                }
+            }
+        }
+
+        private void ShiftLineDown(int y, int amount)
+        {
+            for (int x = 0; x < _data.width; x++)
+            {
+                var block = _grid[x, y];
+                if (block != null)
+                {
+                    _grid[x, y] = null;
+                    _grid[x, y - amount] = block;
+                    block.position += Vector3.down * amount;
+                }
+            }
         }
         
         private Vector2 Round(Vector2 pos)

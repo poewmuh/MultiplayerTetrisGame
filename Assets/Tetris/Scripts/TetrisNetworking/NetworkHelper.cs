@@ -108,7 +108,7 @@ namespace Tetris.TetrisNetworking
 
             try
             {
-                //temp
+                // todo: debugging. fix after normal host and join
                 var queryLobbies = await QueryAllLobbies();
                 Debug.Log($"[LobbyHelper] LobiesCount: {queryLobbies.Results.Count}");
                 foreach (var lobby in queryLobbies.Results)

@@ -8,7 +8,7 @@ namespace Tetris.Gameplay.Core
     {
         public event Action<SessionState> OnSessionStateChanged;
         
-        public GameMode GameMode { get; private set; }
+        public GameMode gameMode { get; private set; }
         
 
         public IGameModeSystem gameModeSystem
@@ -43,8 +43,8 @@ namespace Tetris.Gameplay.Core
         {
             switch (gameModeType)
             {
-                case GameModeType.Singleplayer: GameMode = new SinglePlayerGame(); break;
-                case GameModeType.TwoPlayers: GameMode = new TwoPlayersGame(); break;
+                case GameModeType.Singleplayer: gameMode = new SinglePlayerGame(); break;
+                case GameModeType.TwoPlayers: gameMode = new TwoPlayersGame(); break;
             }
         }
 
@@ -62,7 +62,7 @@ namespace Tetris.Gameplay.Core
 
             if (state == SessionState.Started)
             {
-                GameMode.StartGame();
+                gameMode.StartGame();
             }
         }
 
@@ -75,7 +75,7 @@ namespace Tetris.Gameplay.Core
         {
             _readyPlayers++;
             
-            if (_readyPlayers == GameMode.playersCount)
+            if (_readyPlayers == gameMode.playersCount)
             {
                 SetState(SessionState.Started);
             }

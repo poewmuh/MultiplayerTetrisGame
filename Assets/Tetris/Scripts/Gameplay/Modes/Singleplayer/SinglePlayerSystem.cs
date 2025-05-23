@@ -3,15 +3,14 @@ using Cysharp.Threading.Tasks;
 using Tetris.Data;
 using Tetris.Gameplay.Datas;
 using Tetris.Gameplay.Tetris;
-using Unity.Netcode;
 using UnityEngine;
-using Random = System.Random;
 
 namespace Tetris.Gameplay.Core
 {
+    // todo: for now only work while testing
     public class SinglePlayerSystem : GameplaySystem<SinglePlayerSystem>, IGameModeSystem
     {
-        public event Action OnGameOver;
+        public event Action<ulong> OnGameOver;
 
         public SinglePlayerData Data { get; private set; }
 
@@ -32,7 +31,7 @@ namespace Tetris.Gameplay.Core
         private async UniTaskVoid WaitGameStart()
         {
             await UniTask.WaitWhile(() => !Session.Instance && Session.Instance.state != SessionState.Started);
-            await UniTask.WaitWhile(() => Session.Instance.GameMode.currentState != GameState.InGame);
+            await UniTask.WaitWhile(() => Session.Instance.gameMode.currentState != GameState.InGame);
             _isGameStarted = true;
             SpawnPiece(0);
         }
@@ -42,7 +41,9 @@ namespace Tetris.Gameplay.Core
             var standartPiecePrefabs = _data.GetStandartPiecePrefabs();
             var piece = Instantiate(standartPiecePrefabs[UnityEngine.Random.Range(0, standartPiecePrefabs.Count)], _gameBoard.GetPieceSpawnPoint(), Quaternion.identity);
             piece.transform.SetParent(_gameBoard.transform);
-            piece.GetComponent<TetrisPiece>().Init(_gameBoard);
+            var tetrisPiece = piece.GetComponent<TetrisPiece>();
+            tetrisPiece.SetBoard(_gameBoard);
+            tetrisPiece.Init();
         }
 
         public float GetFallDelay()

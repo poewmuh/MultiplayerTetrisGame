@@ -23,6 +23,14 @@ namespace Tetris.Gameplay.Core
                 OnTimeIsOver = () => SetState(GameState.InGame)
             };
             _countDownTimer.Run();
+
+            Session.Instance.gameModeSystem.OnGameOver += OnGameOver;
+        }
+
+        private void OnGameOver(ulong looserTeam)
+        {
+            Session.Instance.gameModeSystem.OnGameOver -= OnGameOver;
+            SetState(GameState.GameOver);
         }
 
         public virtual void SetState(GameState newState)

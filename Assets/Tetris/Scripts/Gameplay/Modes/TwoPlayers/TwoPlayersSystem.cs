@@ -10,24 +10,44 @@ namespace Tetris.Gameplay.Core
 {
     public class TwoPlayersSystem : GameplaySystem<TwoPlayersSystem>, IGameModeSystem
     {
-        public event Action OnGameOver;
+        public event Action<ulong> OnGameOver;
 
         public TwoPlayersData Data { get; private set; }
         
         [SerializeField] private TetrisData _data;
-        
+
+        private FallHandler _fallHandler;
         private bool _isGameStarted;
+        private NetworkVariable<float> _currentFallTime = new();
 
         protected override void Initialize()
         {
             if (!IsServer) return;
+            _fallHandler = new FallHandler(_data.GetFallData());
+            _fallHandler.OnFallTimeChanged += OnFallTimeChanged;
             WaitGameStart().Forget();
+        }
+
+        protected override void OnDestroy()
+        {
+            _fallHandler.OnFallTimeChanged -= OnFallTimeChanged;
+            _fallHandler = null;
+            base.OnDestroy();
+        }
+
+        private void OnFallTimeChanged(float newFallTime)
+        {
+            if (!Mathf.Approximately(newFallTime, _currentFallTime.Value))
+            {
+                _currentFallTime.Value = newFallTime;
+            }
         }
 
         private async UniTaskVoid WaitGameStart()
         {
             await UniTask.WaitWhile(() => !Session.Instance && Session.Instance.state != SessionState.Started);
-            await UniTask.WaitWhile(() => Session.Instance.GameMode.currentState != GameState.InGame);
+            await UniTask.WaitWhile(() => Session.Instance.gameMode.currentState != GameState.InGame);
+            _fallHandler.SetPauseState(false);
             _isGameStarted = true;
             foreach (var tetrisBoard in BoardManager.Instance.GetAllBoards())
             {
@@ -42,14 +62,19 @@ namespace Tetris.Gameplay.Core
                 ResponseSpawnRpc(ownerId);
                 return;
             }
-            Debug.Log("Spawning piece");
             var standartPiecePrefabs = _data.GetStandartPiecePrefabs();
-            var pieceToSpawn = standartPiecePrefabs[UnityEngine.Random.Range(0, standartPiecePrefabs.Count)].GetComponent<NetworkObject>();
+            var pieceToSpawn = standartPiecePrefabs[UnityEngine.Random.Range(0, standartPiecePrefabs.Count)];
             var board = BoardManager.Instance.GetBoardByUserId(ownerId);
             var piece = Instantiate(pieceToSpawn, board.GetPieceSpawnPoint(), Quaternion.identity);
             piece.SpawnWithOwnership(ownerId);
             OnPieceSpawnedRpc(piece.NetworkObjectId);
-            
+        }
+
+        private void GameOver(ulong looserId)
+        {
+            _fallHandler.SetPauseState(true);
+            _fallHandler.ResetFallTime();
+            OnGameOver?.Invoke(looserId);
         }
 
         [Rpc(SendTo.Everyone)]
@@ -57,12 +82,17 @@ namespace Tetris.Gameplay.Core
         {
             var piece = NetworkManager.SpawnManager.SpawnedObjects[pieceNetId];
             var board = BoardManager.Instance.GetBoardByUserId(piece.OwnerClientId);
-            if (piece.IsOwner)
+            var tetrisPiece = piece.GetComponent<TetrisPiece>();
+            tetrisPiece.SetBoard(board);
+            
+            if (!tetrisPiece.IsValidPosition(Vector2.zero))
             {
-                piece.transform.SetParent(board.transform);
+                GameOver(piece.OwnerClientId);
+                piece.Despawn();
+                return;
             }
-
-            piece.GetComponent<TetrisPiece>().Init(board);
+            
+            tetrisPiece.Init();
         }
 
         [Rpc(SendTo.Server)]
@@ -73,7 +103,13 @@ namespace Tetris.Gameplay.Core
         
         public float GetFallDelay()
         {
-            return 0.7f;
+            return _currentFallTime.Value;
+        }
+
+        private void Update()
+        {
+            if (!IsServer) return;
+            _fallHandler.Tick(Time.deltaTime);
         }
     }
 }
